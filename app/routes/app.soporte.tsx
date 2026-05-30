@@ -9,20 +9,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function Soporte() {
+  const t = i18n.soporte;
   return (
-    <s-page heading={i18n.soporte.titulo}>
-      <s-section>
-        <s-paragraph>{i18n.soporte.mensajeCuerpo}</s-paragraph>
-        <s-paragraph>
-          <s-link href={`mailto:${i18n.soporte.email}`}>
-            {i18n.soporte.email}
-          </s-link>
-        </s-paragraph>
+    <s-page heading={t.titulo}>
+      <s-section heading={t.atencionTitulo}>
+        <p style={{ margin: "0 0 8px" }}>{t.descripcion}</p>
+        <p style={{ margin: 0 }}>{t.atencionTexto}</p>
+      </s-section>
+      <s-section slot="aside" heading={t.contactoTitulo}>
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ margin: "0 0 4px", fontSize: 12, color: "#6d7175" }}>{t.emailLabel}</p>
+          <a href={`mailto:${t.email}`} style={{ color: "#008060", fontSize: 14 }}>{t.email}</a>
+        </div>
+        <s-button href={`mailto:${t.email}`}>{t.enviarCorreo}</s-button>
+      </s-section>
+      <s-section slot="aside" heading={t.tiempoTitulo}>
+        <p style={{ margin: 0 }}>{t.tiempoTexto}</p>
       </s-section>
     </s-page>
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => {
-  return boundary.headers(headersArgs);
-};
+export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

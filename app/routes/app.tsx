@@ -18,9 +18,8 @@ export default function App() {
   return (
     <AppProvider embedded apiKey={apiKey}>
       <s-app-nav>
-        <s-link href="/app">{i18n.nav.inicio}</s-link>
-        <s-link href="/app/avisos">{i18n.nav.avisos}</s-link>
-        <s-link href="/app/analiticas">{i18n.nav.analiticas}</s-link>
+        <s-link href="/app">{i18n.nav.dashboard}</s-link>
+        <s-link href="/app/warnings">{i18n.nav.warnings}</s-link>
         <s-link href="/app/soporte">{i18n.nav.soporte}</s-link>
       </s-app-nav>
       <Outlet />

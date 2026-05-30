@@ -1,0 +1,30 @@
+{% comment %}
+  ProAlert — App Embed Block
+  Se activa en el editor del tema bajo "App embeds".
+  Inyecta la configuración del shop y carga el script del widget.
+{% endcomment %}
+
+<div
+  id="proalert-root"
+  data-shop="{{ shop.permanent_domain }}"
+  style="display:none"
+  aria-hidden="true"
+>
+</div>
+
+<script>
+  window.__proalert = {
+    shop: {{ shop.permanent_domain | json }},
+    apiUrl: '/apps/proalert/api/warnings'
+  };
+</script>
+
+<script src="{{ 'proalert.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "ProAlert Warnings",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

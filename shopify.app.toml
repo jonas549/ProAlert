@@ -38,5 +38,10 @@ api_version = "2026-04"
   uri = "/webhooks/shop/redact"
   compliance_topics = ["shop/redact"]
 
+[app_proxy]
+url = "https://pro-alert.vercel.app/app-proxy"
+subpath = "proalert"
+prefix = "apps"
+
 [build]
 automatically_update_urls_on_dev = true

@@ -37,3 +37,57 @@ model Shop {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
+
+enum RenderType {
+  POPUP
+  EMBEDDED
+}
+
+enum TargetType {
+  PRODUCTS
+  VARIANTS
+  COLLECTIONS
+  ALL
+}
+
+model Warning {
+  id                    String        @id @default(cuid())
+  shop                  String
+  name                  String
+  allowCheckout         Boolean       @default(true)
+  renderType            RenderType    @default(POPUP)
+  content               String        @default("")
+  specialLineItemText   String?
+  designOverride        Json?
+  scheduleStart         DateTime?
+  scheduleEnd           DateTime?
+  visibilityOnAddToCart Boolean       @default(true)
+  visibilityOnBuyNow    Boolean       @default(false)
+  isActive              Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  targets               WarningTarget[]
+}
+
+model WarningTarget {
+  id         String     @id @default(cuid())
+  warningId  String
+  targetType TargetType @default(ALL)
+  targetIds  String[]
+  warning    Warning    @relation(fields: [warningId], references: [id], onDelete: Cascade)
+}
+
+model ShopSettings {
+  id                    String   @id @default(cuid())
+  shop                  String   @unique
+  appEmbedEnabled       Boolean  @default(false)
+  addToCartSelector     String   @default("")
+  customCSS             String?
+  showOnCollectionPages Boolean  @default(true)
+  designDefaults        Json?
+  storefrontApiToken    String?
+  planName              String   @default("FREE")
+  planCheckedAt         DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
