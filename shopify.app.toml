@@ -2,14 +2,18 @@
 
 client_id = "76290212e01f7e4535a9e3413a2002da"
 name = "ProAlert — Product Warnings"
-application_url = "https://example.com"
+application_url = "https://pro-alert.vercel.app"
 embedded = true
 
 [access_scopes]
 scopes = "read_products"
 
 [auth]
-redirect_urls = [ "https://example.com/auth/callback" ]
+redirect_urls = [
+  "https://pro-alert.vercel.app/auth/callback",
+  "https://pro-alert.vercel.app/auth/shopify/callback",
+  "https://pro-alert.vercel.app/api/auth/callback"
+]
 
 [webhooks]
 api_version = "2026-04"
@@ -35,5 +39,4 @@ api_version = "2026-04"
   compliance_topics = ["shop/redact"]
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true
