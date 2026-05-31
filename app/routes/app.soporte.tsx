@@ -1,5 +1,14 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import {
+  Page,
+  Layout,
+  Card,
+  BlockStack,
+  Text,
+  Button,
+  Divider,
+} from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import i18n from "../i18n";
 
@@ -10,24 +19,64 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Soporte() {
   const t = i18n.soporte;
+
   return (
-    <s-page heading={t.titulo}>
-      <s-section heading={t.atencionTitulo}>
-        <p style={{ margin: "0 0 8px" }}>{t.descripcion}</p>
-        <p style={{ margin: 0 }}>{t.atencionTexto}</p>
-      </s-section>
-      <s-section slot="aside" heading={t.contactoTitulo}>
-        <div style={{ marginBottom: 12 }}>
-          <p style={{ margin: "0 0 4px", fontSize: 12, color: "#6d7175" }}>{t.emailLabel}</p>
-          <a href={`mailto:${t.email}`} style={{ color: "#008060", fontSize: 14 }}>{t.email}</a>
-        </div>
-        <s-button href={`mailto:${t.email}`}>{t.enviarCorreo}</s-button>
-      </s-section>
-      <s-section slot="aside" heading={t.tiempoTitulo}>
-        <p style={{ margin: 0 }}>{t.tiempoTexto}</p>
-      </s-section>
-    </s-page>
+    <Page title={t.titulo}>
+      <Layout>
+        <Layout.Section>
+          <Card>
+            <BlockStack gap="400">
+              <Text variant="headingMd" as="h2">
+                {t.atencionTitulo}
+              </Text>
+              <Divider />
+              <Text as="p" variant="bodyMd">
+                {t.descripcion}
+              </Text>
+              <Text as="p" variant="bodyMd">
+                {t.atencionTexto}
+              </Text>
+            </BlockStack>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section variant="oneThird">
+          <BlockStack gap="400">
+            <Card>
+              <BlockStack gap="300">
+                <Text variant="headingMd" as="h2">
+                  {t.contactoTitulo}
+                </Text>
+                <Divider />
+                <BlockStack gap="100">
+                  <Text as="p" variant="bodySm" tone="subdued">
+                    {t.emailLabel}
+                  </Text>
+                  <Text as="p" variant="bodyMd" fontWeight="semibold">
+                    {t.email}
+                  </Text>
+                </BlockStack>
+                <Button url={`mailto:${t.email}`}>{t.enviarCorreo}</Button>
+              </BlockStack>
+            </Card>
+
+            <Card>
+              <BlockStack gap="200">
+                <Text variant="headingMd" as="h2">
+                  {t.tiempoTitulo}
+                </Text>
+                <Divider />
+                <Text as="p" variant="bodyLg" fontWeight="bold" tone="success">
+                  {t.tiempoTexto}
+                </Text>
+              </BlockStack>
+            </Card>
+          </BlockStack>
+        </Layout.Section>
+      </Layout>
+    </Page>
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);
+export const headers: HeadersFunction = (headersArgs) =>
+  boundary.headers(headersArgs);

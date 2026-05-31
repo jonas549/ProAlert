@@ -3,6 +3,7 @@ import { authenticate } from "../shopify.server";
 import { getActiveWarningsForStorefront } from "../lib/warnings.server";
 import { getShopSettings } from "../lib/shop-settings.server";
 
+// Handles ALL App Proxy requests: /app-proxy, /app-proxy/*, /app-proxy/api/warnings
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.public.appProxy(request);
 

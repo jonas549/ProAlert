@@ -2,6 +2,7 @@ const i18n = {
   nav: {
     dashboard: "Dashboard",
     warnings: "Warnings",
+    settings: "Settings",
     soporte: "Soporte",
   },
   dashboard: {

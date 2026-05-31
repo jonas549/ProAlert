@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { redirect, useLoaderData, useNavigate } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import { Page, Layout, Banner } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { getWarning, updateWarning } from "../lib/warnings.server";
 import { getCurrentPlan } from "../lib/billing.server";
@@ -37,7 +38,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     visibilityOnAddToCart: body.visibilityOnAddToCart,
     visibilityOnBuyNow: body.visibilityOnBuyNow,
     isActive: body.isActive,
-    targets: [{ targetType: body.targetType as TargetType, targetIds: body.targetIds.map((x) => x.id) }],
+    targets: [
+      { targetType: body.targetType as TargetType, targetIds: body.targetIds.map((x) => x.id) },
+    ],
   });
 
   return redirect("/app/warnings");
@@ -55,8 +58,12 @@ export default function EditWarning() {
     renderType: warning.renderType,
     content: warning.content,
     specialLineItemText: warning.specialLineItemText ?? "",
-    scheduleStart: warning.scheduleStart ? new Date(warning.scheduleStart).toISOString().slice(0, 16) : "",
-    scheduleEnd: warning.scheduleEnd ? new Date(warning.scheduleEnd).toISOString().slice(0, 16) : "",
+    scheduleStart: warning.scheduleStart
+      ? new Date(warning.scheduleStart).toISOString().slice(0, 16)
+      : "",
+    scheduleEnd: warning.scheduleEnd
+      ? new Date(warning.scheduleEnd).toISOString().slice(0, 16)
+      : "",
     visibilityOnAddToCart: warning.visibilityOnAddToCart,
     visibilityOnBuyNow: warning.visibilityOnBuyNow,
     isActive: warning.isActive,
@@ -79,13 +86,22 @@ export default function EditWarning() {
   };
 
   return (
-    <s-page heading={i18n.warningForm.tituloEditar}>
-      <s-button slot="primary-action" onClick={() => navigate("/app/warnings")}>{i18n.warningForm.cancelar}</s-button>
-      <s-section>
-        <WarningWizard initialData={initialData} onSubmit={handleSubmit} isSubmitting={submitting} planName={plan} />
-      </s-section>
-    </s-page>
+    <Page
+      title={i18n.warningForm.tituloEditar}
+      backAction={{ content: i18n.warnings.titulo, url: "/app/warnings" }}
+      secondaryActions={[
+        { content: i18n.warningForm.cancelar, url: "/app/warnings" },
+      ]}
+    >
+      <WarningWizard
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        isSubmitting={submitting}
+        planName={plan}
+      />
+    </Page>
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);
+export const headers: HeadersFunction = (headersArgs) =>
+  boundary.headers(headersArgs);

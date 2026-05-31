@@ -1,6 +1,18 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import {
+  Page,
+  Layout,
+  Card,
+  BlockStack,
+  InlineStack,
+  Text,
+  Button,
+  Badge,
+  List,
+  Divider,
+} from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { getCurrentPlan } from "../lib/billing.server";
 import i18n from "../i18n";
@@ -21,6 +33,7 @@ export default function Billing() {
       name: t.planFree,
       price: t.precioFree,
       features: [...t.features.free],
+      highlight: false,
     },
     {
       key: "UNLIMITED",
@@ -32,75 +45,66 @@ export default function Billing() {
   ];
 
   return (
-    <s-page heading={t.titulo}>
-      <s-section>
-        <s-paragraph>
-          {t.planActual}: <strong>{plan === "FREE" ? t.planFree : t.planUnlimited}</strong>
-        </s-paragraph>
-      </s-section>
-
-      <s-section>
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-          {plans.map((p) => (
-            <div
-              key={p.key}
-              style={{
-                flex: "1 1 260px",
-                border: `2px solid ${p.highlight ? "#008060" : "#e1e3e5"}`,
-                borderRadius: 12,
-                padding: 24,
-                background: p.highlight ? "#f0faf6" : "#fff",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <strong style={{ fontSize: 18 }}>{p.name}</strong>
-                {plan === p.key && (
-                  <span
-                    style={{
-                      fontSize: 11,
-                      padding: "2px 8px",
-                      background: "#008060",
-                      color: "#fff",
-                      borderRadius: 12,
-                      fontWeight: 600,
-                    }}
+    <Page title={t.titulo}>
+      <Layout>
+        {plans.map((p) => (
+          <Layout.Section key={p.key}>
+            <Card>
+              <BlockStack gap="400">
+                <InlineStack align="space-between" blockAlign="center">
+                  <Text
+                    variant="headingLg"
+                    as="h2"
+                    fontWeight="bold"
                   >
-                    {t.planActivo}
-                  </span>
-                )}
-              </div>
-              <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 16, color: p.highlight ? "#008060" : "#202223" }}>
-                {p.price}
-              </div>
-              <ul style={{ padding: "0 0 0 16px", margin: "0 0 20px", fontSize: 14, color: "#6d7175", lineHeight: 1.8 }}>
-                {p.features.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-              {plan !== p.key && p.key === "UNLIMITED" && (
-                <a
-                  href={`https://${shop}/admin/apps`}
-                  target="_top"
-                  style={{
-                    display: "inline-block",
-                    padding: "8px 20px",
-                    background: "#008060",
-                    color: "#fff",
-                    borderRadius: 6,
-                    textDecoration: "none",
-                    fontWeight: 600,
-                    fontSize: 14,
-                  }}
+                    {p.name}
+                  </Text>
+                  {plan === p.key && (
+                    <Badge tone="success">{t.planActivo}</Badge>
+                  )}
+                </InlineStack>
+
+                <Text
+                  variant="heading2xl"
+                  as="p"
+                  fontWeight="bold"
                 >
-                  {t.upgradeBtn}
-                </a>
-              )}
-            </div>
-          ))}
-        </div>
-      </s-section>
-    </s-page>
+                  {p.price}
+                </Text>
+                {p.key === "UNLIMITED" && (
+                  <Text as="p" variant="bodySm" tone="subdued">
+                    por mes, facturado mensualmente
+                  </Text>
+                )}
+
+                <Divider />
+
+                <List type="bullet">
+                  {p.features.map((f) => (
+                    <List.Item key={f}>{f}</List.Item>
+                  ))}
+                </List>
+
+                {plan !== p.key && p.key === "UNLIMITED" && (
+                  <Button
+                    variant="primary"
+                    url={`https://${shop}/admin/apps`}
+                    target="_top"
+                  >
+                    {t.upgradeBtn}
+                  </Button>
+                )}
+                {plan === p.key && (
+                  <Button disabled>{t.planActivo}</Button>
+                )}
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        ))}
+      </Layout>
+    </Page>
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);
+export const headers: HeadersFunction = (headersArgs) =>
+  boundary.headers(headersArgs);

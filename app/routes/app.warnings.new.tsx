@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { redirect, useActionData, useLoaderData, useNavigate } from "react-router";
+import { redirect, useLoaderData, useNavigate } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import { Page, Layout, Card, Banner, Button } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { createWarning } from "../lib/warnings.server";
 import { canCreateWarning } from "../lib/billing.server";
@@ -36,7 +37,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     visibilityOnAddToCart: body.visibilityOnAddToCart,
     visibilityOnBuyNow: body.visibilityOnBuyNow,
     isActive: body.isActive,
-    targets: [{ targetType: body.targetType as TargetType, targetIds: body.targetIds.map((x) => x.id) }],
+    targets: [
+      { targetType: body.targetType as TargetType, targetIds: body.targetIds.map((x) => x.id) },
+    ],
   });
 
   return redirect("/app/warnings");
@@ -44,50 +47,59 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function NewWarning() {
   const { allowed, plan } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
   if (!allowed) {
     return (
-      <s-page heading={i18n.warningForm.tituloNuevo}>
-        <s-section>
-          <s-banner tone="warning">
-            <p slot="title">{i18n.billing.upgradeModalTitulo}</p>
-            <p>{i18n.billing.upgradeModalDesc}</p>
-            <s-button onClick={() => navigate("/app/billing")} variant="primary">{i18n.billing.upgradeModalBtn}</s-button>
-          </s-banner>
-        </s-section>
-      </s-page>
+      <Page
+        title={i18n.warningForm.tituloNuevo}
+        backAction={{ content: i18n.warnings.titulo, url: "/app/warnings" }}
+      >
+        <Layout>
+          <Layout.Section>
+            <Banner
+              title={i18n.billing.upgradeModalTitulo}
+              tone="warning"
+              action={{ content: i18n.billing.upgradeModalBtn, onAction: () => navigate("/app/billing") }}
+            >
+              <p>{i18n.billing.upgradeModalDesc}</p>
+            </Banner>
+          </Layout.Section>
+        </Layout>
+      </Page>
     );
   }
 
-  const handleSubmit = async (data: WizardData) => {
+  const handleSubmit = (data: WizardData) => {
     setSubmitting(true);
-    const fd = new FormData();
-    fd.append("data", JSON.stringify(data));
     const form = document.createElement("form");
     form.method = "post";
-    document.body.appendChild(form);
     const input = document.createElement("input");
     input.type = "hidden";
     input.name = "data";
     input.value = JSON.stringify(data);
     form.appendChild(input);
+    document.body.appendChild(form);
     form.submit();
   };
 
   return (
-    <s-page heading={i18n.warningForm.tituloNuevo}>
-      <s-button slot="primary-action" onClick={() => navigate("/app/warnings")}>{i18n.warningForm.cancelar}</s-button>
-      <s-section>
-        {actionData && "error" in actionData && actionData.error && (
-          <s-banner tone="critical"><p>{actionData.error}</p></s-banner>
-        )}
-        <WarningWizard onSubmit={handleSubmit} isSubmitting={submitting} planName={plan} />
-      </s-section>
-    </s-page>
+    <Page
+      title={i18n.warningForm.tituloNuevo}
+      backAction={{ content: i18n.warnings.titulo, url: "/app/warnings" }}
+      secondaryActions={[
+        { content: i18n.warningForm.cancelar, url: "/app/warnings" },
+      ]}
+    >
+      <WarningWizard
+        onSubmit={handleSubmit}
+        isSubmitting={submitting}
+        planName={plan}
+      />
+    </Page>
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);
+export const headers: HeadersFunction = (headersArgs) =>
+  boundary.headers(headersArgs);
