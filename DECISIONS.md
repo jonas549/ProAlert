@@ -74,6 +74,37 @@ El App Proxy cubre el caso de uso de datos dinámicos sin necesidad de un token 
 
 Shopify requiere 3 webhooks GDPR para apps en el App Store. Se usan `compliance_topics` (no `topics`) en el toml.
 
+## Polaris React vs App Bridge Web Components
+
+Se usa **`@shopify/polaris` v13 React components** para todas las vistas del admin, con `AppProvider` de Polaris para contexto i18n (español). Se mantiene el `AppBridgeProvider` de `@shopify/shopify-app-react-router` para el shell embedded y `<s-app-nav>` para la sidebar de Shopify Admin.
+
+Los web components (`s-*`) y los componentes React de Polaris pueden coexistir en el mismo árbol. El nav lateral usa web components (integración con Shopify Admin frame); el contenido de las páginas usa Polaris React.
+
+**Componentes Polaris usados:**
+- `Page` + `Layout` + `Layout.Section` + `Layout.AnnotatedSection` — estructura de páginas
+- `IndexTable` + `useIndexResourceState` — lista de Warnings
+- `EmptyState` — estado vacío
+- `Banner` — alertas de embed status
+- `Card`, `BlockStack`, `InlineStack` — layout de contenido
+- `Tabs`, `TextField`, `Checkbox`, `Select`, `FormLayout` — formularios
+- `Badge` — estados de Warnings
+- `PageActions` — acciones sticky en Settings
+
+## Deep link App Embed
+
+Formato vigente para activar el App Embed en el theme editor:
+```
+https://{shop}/admin/themes/current/editor?context=apps&activateAppId={clientId}/{blockHandle}
+```
+- `clientId` = `76290212e01f7e4535a9e3413a2002da`
+- `blockHandle` = `app-embed` (nombre del archivo `blocks/app-embed.liquid` sin extensión)
+
+La función `getThemeEditorEmbedUrl(shop, apiKey)` en `app/lib/theme-editor.ts` centraliza esta lógica.
+
+## App Proxy — ruta catch-all
+
+La ruta `app/routes/app-proxy.tsx` maneja TODOS los paths del proxy (`/app-proxy`, `/app-proxy/*`). La versión anterior usaba `app-proxy.api.warnings.tsx` que solo manejaba `/app-proxy/api/warnings` y dejaba `/app-proxy` sin match.
+
 ## App Embed Block vs App Block
 
 Se usa **App Embed Block** (`"target": "body"`) en lugar de App Block porque:
